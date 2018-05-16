@@ -2,15 +2,21 @@ import PyPDF2
 import docx
 import nltk
 import string
+import spacy
 from nltk.corpus import stopwords
 from nltk.collocations import *
 
-filePath = r'C:\Users\SSSTEJA\Desktop\Self Development\SUBRAHMANYA ASHTAKAM KARAVALAMBA STOTRAM.docx'
-filePath = r'C:\Users\SSSTEJA\Desktop\nowfloats\sample (1).pdf'
+# filePath = r'C:\Users\SSSTEJA\Desktop\Self Development\SUBRAHMANYA ASHTAKAM KARAVALAMBA STOTRAM.docx'
+# filePath = r'C:\Users\SSSTEJA\Desktop\nowfloats\sample (1).pdf'
 filePath = r'./sample.pdf'
+filePath = r'./Machine Learning - An Introduction.docx'
+similarityThreshold = 0.8
+
+
+
 fileText = []
 if filePath.endswith('pdf'):
-    print('in pdf block')
+    # print('in pdf block')
     fileObj = open(filePath, 'rb')
     pdfReader = PyPDF2.PdfFileReader(fileObj)
     pdfSize = pdfReader.numPages
@@ -18,15 +24,16 @@ if filePath.endswith('pdf'):
     for i in range(pdfSize):
         fileText.append(pdfReader.getPage(i).extractText())
 
-    #print(fileText)
+    print('********************PDF File Text**************************')
+    print(fileText)
 
 elif filePath.endswith('doc') or filePath.endswith('docx'):
 
     doc = docx.Document(filePath)
     for para in doc.paragraphs:
         fileText.append(para.text)
-        
-    #print(fileText)
+    print('********************Word File Text**************************')    
+    print(fileText)
 
 else:
     print('Could not determine the file type')
@@ -38,7 +45,10 @@ punctuations = ['(',')',';',':','[',']',',', '/']
 data = [word for word in data if not word in stopwords.words('english') and  not word in string.punctuation]
 
 fdist1 = nltk.FreqDist(data)
-#print (fdist1.most_common(50))
+print('******************** Word Frequency of the file **************************')
+# print (fdist1.most_common(50))
+for sample in fdist1:
+    print(sample, fdist1[sample])
 
 #------------------------------2-------------------------
 
@@ -49,13 +59,15 @@ finder = BigramCollocationFinder.from_words(nltk.wordpunct_tokenize(" ".join(dat
 # only bigrams that appear 3+ times
 finder.apply_freq_filter(3) 
 # return the 10 n-grams with the highest PMI
-#print(finder.nbest(bigram_measures.pmi, 10))  
+print('******************** Common Bigrams of the file **************************')
+print(finder.nbest(bigram_measures.pmi, 10))  
 
 finder = TrigramCollocationFinder.from_words(nltk.wordpunct_tokenize(" ".join(data)))
 # only trigrams that appear 3+ times
 finder.apply_freq_filter(3) 
 # return the 10 n-grams with the highest PMI
-#print(finder.nbest(trigram_measures.pmi, 10))  
+print('******************** Common Trigrams of the file **************************')
+print(finder.nbest(trigram_measures.pmi, 10))  
 
 #------------------------------3--------------------------
 
@@ -67,9 +79,9 @@ for chunk in fileText:
 fileTextSentences = [x.strip() for x in fileTextSentences]
 # fileTextSentences = [x for x in fileTextSentences if x]
 
-fileTextSentences = list(filter(bool, fileTextSentences))
-for elem in fileTextSentences:
-    print(elem)
+# fileTextSentences = list(filter(bool, fileTextSentences))
+# for elem in fileTextSentences:
+#     print(elem)
 
 
 uniqueSet = set()
@@ -79,11 +91,25 @@ for sentence in fileTextSentences:
         repeatedSet.add(sentence)
     else:
         uniqueSet.add(sentence)
+print('******************** Duplicate sentences in the file **************************')        
 print(repeatedSet)
 
 
+uniqueSet =  uniqueSet
+nlp = spacy.load('en')
+doc = nlp(" ".join(uniqueSet))
+uniqueList = list(uniqueSet)
 
-
+print('******************** Similar sentences in the file **************************')
+for i in range(len(uniqueSet)):
+    for j in range(i+1, len(uniqueSet)):
+        sen1 = nlp(uniqueList[i]) 
+        sen2 = nlp(uniqueList[j])
+        simi = sen1.similarity(sen2)    
+        if simi > similarityThreshold:
+            print("sen1:", sen1)
+            print("sen2:", sen2)
+            print("similarity:", simi)
 
 
 
