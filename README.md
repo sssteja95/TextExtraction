@@ -3,7 +3,7 @@ This is a sample program to read a document(PDF/docx) and prints frequency of wo
 # Modules used
 The following are the packages used in this program
 
-PyPDF2
-python-docx
-NLTK
+PyPDF2,
+python-docx,
+NLTK,
 SpaCy
