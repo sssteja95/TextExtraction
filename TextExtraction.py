@@ -2,13 +2,18 @@ import PyPDF2
 import docx
 import nltk
 import string
+import spacy
 from nltk.corpus import stopwords
 from nltk.collocations import *
 
 # filePath = r'C:\Users\SSSTEJA\Desktop\Self Development\SUBRAHMANYA ASHTAKAM KARAVALAMBA STOTRAM.docx'
 # filePath = r'C:\Users\SSSTEJA\Desktop\nowfloats\sample (1).pdf'
+filePath = r'./sample.pdf'
 filePath = r'./Machine Learning - An Introduction.docx'
-# filePath = r'./sample.pdf'
+similarityThreshold = 0.8
+
+
+
 fileText = []
 if filePath.endswith('pdf'):
     # print('in pdf block')
@@ -90,8 +95,21 @@ print('******************** Duplicate sentences in the file ********************
 print(repeatedSet)
 
 
+uniqueSet =  uniqueSet
+nlp = spacy.load('en')
+doc = nlp(" ".join(uniqueSet))
+uniqueList = list(uniqueSet)
 
-
+print('******************** Similar sentences in the file **************************')
+for i in range(len(uniqueSet)):
+    for j in range(i+1, len(uniqueSet)):
+        sen1 = nlp(uniqueList[i]) 
+        sen2 = nlp(uniqueList[j])
+        simi = sen1.similarity(sen2)    
+        if simi > similarityThreshold:
+            print("sen1:", sen1)
+            print("sen2:", sen2)
+            print("similarity:", simi)
 
 
 
