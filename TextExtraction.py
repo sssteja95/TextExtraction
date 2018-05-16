@@ -7,7 +7,7 @@ from nltk.collocations import *
 
 filePath = r'C:\Users\SSSTEJA\Desktop\Self Development\SUBRAHMANYA ASHTAKAM KARAVALAMBA STOTRAM.docx'
 filePath = r'C:\Users\SSSTEJA\Desktop\nowfloats\sample (1).pdf'
-filePath = r'./sample (1).pdf'
+filePath = r'./sample.pdf'
 fileText = []
 if filePath.endswith('pdf'):
     print('in pdf block')
@@ -71,6 +71,15 @@ fileTextSentences = list(filter(bool, fileTextSentences))
 for elem in fileTextSentences:
     print(elem)
 
+
+uniqueSet = set()
+repeatedSet = set()
+for sentence in fileTextSentences:
+    if sentence in uniqueSet:
+        repeatedSet.add(sentence)
+    else:
+        uniqueSet.add(sentence)
+print(repeatedSet)
 
 
 
